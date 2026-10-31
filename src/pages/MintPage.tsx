@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Bot, Check, Search, X } from 'lucide-react';
 import { SectionHeader } from '@/components/SectionHeader';
+import { Reveal } from '@/components/Reveal';
 import { CONTRACT } from '@/config/contract';
 import { useLanguage } from '@/i18n/useLanguage';
 import { ethCall, padAddress, SELECTORS } from '@/lib/chain';
@@ -87,7 +88,8 @@ export function MintPage() {
       </ol>
 
       <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-5">
-        <section className="flex flex-col gap-5 rounded-3xl border border-white/10 bg-slate-900/60 p-5 sm:gap-6 sm:p-8 lg:col-span-3">
+        <Reveal className="lg:col-span-3">
+        <section className="flex h-full flex-col gap-5 rounded-3xl border border-white/10 bg-slate-900/60 p-5 sm:gap-6 sm:p-8">
           <div className="flex items-center gap-2">
             <span
               className={`h-3 w-3 rounded-full ${open ? 'bg-emerald-400' : 'bg-amber-300'}`}
@@ -137,8 +139,10 @@ export function MintPage() {
           <p className="text-sm text-slate-300">{t.mint.limit}</p>
           <p className="text-sm leading-relaxed text-slate-400">{t.mint.freeNote}</p>
         </section>
+        </Reveal>
 
-        <aside className="flex flex-col gap-5 rounded-3xl border border-white/10 bg-slate-900/60 p-5 sm:p-8 lg:col-span-2">
+        <Reveal className="lg:col-span-2" delay={120}>
+        <aside className="flex h-full flex-col gap-5 rounded-3xl border border-white/10 bg-slate-900/60 p-5 sm:p-8">
           <h3 className="font-semibold text-white">{t.mint.checkTitle}</h3>
           <div className="flex flex-col gap-2 sm:flex-row">
             <input
@@ -182,6 +186,7 @@ export function MintPage() {
             </div>
           )}
         </aside>
+        </Reveal>
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-slate-950/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden">

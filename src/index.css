@@ -11,3 +11,64 @@
     @apply font-sans antialiased;
   }
 }
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@layer utilities {
+  /* Page transition on route change */
+  .page-enter {
+    animation: fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Scroll-reveal: elements start soft and settle into place */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Seamless marquee (track holds two copies of the row) */
+  .marquee-track {
+    animation: marquee-scroll 26s linear infinite;
+  }
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter,
+  .marquee-track {
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

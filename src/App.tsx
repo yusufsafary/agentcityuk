@@ -36,7 +36,11 @@ function Site() {
   return (
     <div className="flex min-h-screen flex-col bg-slate-950 text-slate-100">
       <SiteHeader route={route} navigate={navigate} />
-      <main className="flex-1">{page}</main>
+      <main className="flex-1">
+        <div key={route} className="page-enter">
+          {page}
+        </div>
+      </main>
       <SiteFooter navigate={navigate} />
     </div>
   );

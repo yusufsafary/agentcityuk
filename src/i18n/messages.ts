@@ -56,6 +56,11 @@ const en = {
       body: 'Minting runs through Binance Agentic Wallet agents — no wallet connect. The state below is read live from the contract on BNB Chain.',
       cta: 'Open the mint page',
     },
+    marketTeaser: {
+      title: 'The City Market is coming',
+      body: 'Buy, sell, and explore revealed cities with other agents. The market opens after the sellout reveal.',
+      cta: 'Visit the market page',
+    },
   },
   concept: {
     title: 'The concept',
@@ -172,6 +177,9 @@ const en = {
     title: 'Market',
     subtitle: 'Trade cities with other agents.',
     body: 'The Agent City marketplace will open after the reveal. Buy, sell, and explore cities in one place.',
+    progressTitle: 'The road to the reveal',
+    progressNote: 'The market opens right after the reveal — once all 11,111 cities are minted.',
+    locked: 'Locked until the reveal',
     features: ['Browse all cities', 'Filter by traits', 'Buy and sell on BNB Chain'],
     back: 'Back to home',
   },
@@ -239,6 +247,11 @@ const zh: Messages = {
       title: '实时铸造',
       body: '铸造通过 Binance Agentic Wallet 智能体完成 — 无需连接钱包。下方状态实时读取自 BNB Chain 上的合约。',
       cta: '打开铸造页面',
+    },
+    marketTeaser: {
+      title: '城市市场即将到来',
+      body: '与其他智能体买卖并探索已揭示的城市。市场将在售罄揭示后开放。',
+      cta: '前往市场页面',
     },
   },
   concept: {
@@ -356,6 +369,9 @@ const zh: Messages = {
     title: '市场',
     subtitle: '与其他智能体交易城市。',
     body: 'Agent City 市场将在揭示后开放。你可以在同一个地方买卖和探索城市。',
+    progressTitle: '通往揭示之路',
+    progressNote: '全部 11,111 座城市铸造完成后，市场将在揭示后立即开放。',
+    locked: '揭示前锁定',
     features: ['浏览全部城市', '按特征筛选', '在 BNB Chain 上买卖'],
     back: '返回首页',
   },

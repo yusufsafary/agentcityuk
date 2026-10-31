@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import { ArrowRight, Coins, Eye, Layers, Sparkles, Wallet } from 'lucide-react';
 import { CityPhoto } from '@/components/CityPhoto';
 import { LiveMintSection } from '@/components/LiveMintSection';
+import { MarketTeaser } from '@/components/MarketTeaser';
+import { Reveal } from '@/components/Reveal';
 import { SectionHeader } from '@/components/SectionHeader';
 import { CONTRACT } from '@/config/contract';
 import type { Route } from '@/hooks/useHashRoute';
@@ -14,6 +17,16 @@ const PILLAR_ICONS = [Layers, Sparkles, Eye];
 
 export function HomePage({ navigate }: HomePageProps) {
   const { t } = useLanguage();
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  const onHeroMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    setTilt({
+      x: (e.clientX - r.left) / r.width - 0.5,
+      y: (e.clientY - r.top) / r.height - 0.5,
+    });
+  };
 
   const stats = [
     { icon: Layers, label: t.home.stats.supply, value: CONTRACT.totalSupply.toLocaleString('en-US') },
@@ -50,9 +63,19 @@ export function HomePage({ navigate }: HomePageProps) {
               </button>
             </div>
           </div>
-          <div className="relative">
+          <div
+            className="relative"
+            onPointerMove={onHeroMove}
+            onPointerLeave={() => setTilt({ x: 0, y: 0 })}
+          >
             <div aria-hidden className="absolute -inset-6 -z-10 rounded-[2rem] bg-amber-400/10 blur-3xl" />
-            <CityPhoto
+            <div
+              style={{
+                transform: `perspective(1000px) rotateX(${(-tilt.y * 5).toFixed(2)}deg) rotateY(${(tilt.x * 5).toFixed(2)}deg)`,
+                transition: 'transform 0.3s ease-out',
+              }}
+            >
+              <CityPhoto
               src="https://images.pexels.com/photos/35400651/pexels-photo-35400651.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
               alt={t.home.heroImageAlt}
               className="aspect-[4/3] w-full shadow-2xl shadow-black/60"
@@ -67,7 +90,8 @@ export function HomePage({ navigate }: HomePageProps) {
                   {t.home.agentOnline}
                 </span>
               </div>
-            </CityPhoto>
+              </CityPhoto>
+            </div>
           </div>
         </div>
 
@@ -82,6 +106,7 @@ export function HomePage({ navigate }: HomePageProps) {
         </div>
       </section>
 
+      <Reveal>
       <section className="mx-auto w-full max-w-6xl px-5 py-16 lg:px-8 lg:py-24">
         <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">{t.home.pillarsTitle}</h2>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -102,8 +127,15 @@ export function HomePage({ navigate }: HomePageProps) {
           })}
         </div>
       </section>
+      </Reveal>
 
-      <LiveMintSection navigate={navigate} />
+      <Reveal>
+        <LiveMintSection navigate={navigate} />
+      </Reveal>
+
+      <Reveal>
+        <MarketTeaser navigate={navigate} />
+      </Reveal>
 
       <section className="mx-auto w-full max-w-6xl px-5 pb-20 lg:px-8">
         <div className="flex flex-col items-start gap-6 rounded-3xl border border-amber-300/20 bg-gradient-to-br from-slate-900 to-slate-950 p-7 sm:flex-row sm:items-center sm:justify-between sm:p-10">

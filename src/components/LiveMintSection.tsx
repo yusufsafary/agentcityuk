@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Bot } from 'lucide-react';
 import { CONTRACT } from '@/config/contract';
 import type { Route } from '@/hooks/useHashRoute';
@@ -35,6 +35,32 @@ export function LiveMintSection({ navigate }: LiveMintSectionProps) {
     };
   }, []);
 
+  // Animated counter: ease the displayed number toward the live value.
+  const [display, setDisplay] = useState<number | null>(null);
+  const displayRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (minted === null) return;
+    const from = displayRef.current;
+    if (from === null || from === minted) {
+      displayRef.current = minted;
+      setDisplay(minted);
+      return;
+    }
+    const start = performance.now();
+    const duration = 700;
+    let raf = 0;
+    const step = (now: number) => {
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const value = Math.round(from + (minted - from) * eased);
+      displayRef.current = value;
+      setDisplay(value);
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [minted]);
+
   const progress = minted === null ? 0 : (minted / CONTRACT.totalSupply) * 100;
 
   return (
@@ -60,7 +86,7 @@ export function LiveMintSection({ navigate }: LiveMintSectionProps) {
         <div>
           <p className="text-xs uppercase tracking-widest text-slate-400">{t.mint.progress}</p>
           <p className="mt-2 font-display text-[26px] font-semibold text-white sm:text-3xl">
-            {minted === null ? '—' : minted.toLocaleString('en-US')}
+            {display === null ? '—' : display.toLocaleString('en-US')}
             <span className="text-lg text-slate-400">
               {' '}
               {t.mint.of} {CONTRACT.totalSupply.toLocaleString('en-US')}
