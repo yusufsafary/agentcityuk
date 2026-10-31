@@ -1,0 +1,107 @@
+import { ArrowRight, Coins, Eye, Layers, Sparkles, Wallet } from 'lucide-react';
+import { CityArt } from '@/components/CityArt';
+import { SectionHeader } from '@/components/SectionHeader';
+import { CONTRACT } from '@/config/contract';
+import type { Route } from '@/hooks/useHashRoute';
+import { useLanguage } from '@/i18n/useLanguage';
+
+interface HomePageProps {
+  navigate: (route: Route) => void;
+}
+
+const PILLAR_ICONS = [Layers, Sparkles, Eye];
+
+export function HomePage({ navigate }: HomePageProps) {
+  const { t } = useLanguage();
+
+  const stats = [
+    { icon: Layers, label: t.home.stats.supply, value: CONTRACT.totalSupply.toLocaleString('en-US') },
+    { icon: Wallet, label: t.home.stats.perWallet, value: String(CONTRACT.maxPerWallet) },
+    { icon: Eye, label: t.home.stats.reveal, value: t.home.stats.revealValue },
+    { icon: Coins, label: t.home.stats.fee, value: t.home.stats.feeValue },
+  ];
+
+  return (
+    <div className="flex flex-col">
+      <section className="relative overflow-hidden pt-28 pb-16 sm:pt-32 lg:pb-24">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(251,191,36,0.12),transparent_60%)]"
+        />
+        <div className="relative mx-auto grid max-w-6xl gap-12 px-5 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8">
+          <div className="flex flex-col gap-8">
+            <SectionHeader eyebrow={t.home.eyebrow} title={t.home.title} subtitle={t.home.subtitle} />
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => navigate('/mint')}
+                className="group inline-flex items-center justify-center gap-2 rounded-full bg-amber-400 px-6 py-3.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-400/20 transition-all hover:-translate-y-0.5 hover:bg-amber-300"
+              >
+                {t.home.ctaPrimary}
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/concept')}
+                className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/5"
+              >
+                {t.home.ctaSecondary}
+              </button>
+            </div>
+          </div>
+          <div className="relative">
+            <CityArt seed={1} className="aspect-[4/3] w-full shadow-2xl shadow-black/50" />
+          </div>
+        </div>
+
+        <div className="relative mx-auto mt-14 grid max-w-6xl grid-cols-2 gap-3 px-5 lg:mt-20 lg:grid-cols-4 lg:gap-4 lg:px-8">
+          {stats.map((s) => (
+            <div key={s.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm sm:p-5">
+              <s.icon className="h-5 w-5 text-amber-300" />
+              <p className="mt-3 font-display text-xl font-semibold text-white sm:text-2xl">{s.value}</p>
+              <p className="mt-1 text-xs text-slate-400 sm:text-sm">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-5 py-16 lg:px-8 lg:py-24">
+        <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">{t.home.pillarsTitle}</h2>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {t.home.pillars.map((pillar, i) => {
+            const Icon = PILLAR_ICONS[i];
+            return (
+              <article
+                key={pillar.title}
+                className="group rounded-2xl border border-white/10 bg-slate-900/60 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/40"
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-400/10 text-amber-300 transition-colors group-hover:bg-amber-400 group-hover:text-slate-950">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-5 text-lg font-semibold text-white">{pillar.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-300">{pillar.body}</p>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-5 pb-20 lg:px-8">
+        <div className="flex flex-col items-start gap-6 rounded-3xl border border-amber-300/20 bg-gradient-to-br from-slate-900 to-slate-950 p-7 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+          <div className="max-w-xl">
+            <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">{t.home.ctaBandTitle}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300 sm:text-base">{t.home.ctaBandBody}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => navigate('/mint')}
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-amber-400 px-6 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-amber-300"
+          >
+            {t.home.ctaPrimary}
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
