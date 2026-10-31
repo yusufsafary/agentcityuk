@@ -105,14 +105,14 @@ export function MintPage() {
   };
 
   return (
-    <div className="flex flex-col gap-14 px-5 pt-28 pb-20 lg:px-8 lg:pt-36">
+    <div className="flex flex-col gap-8 overflow-x-clip px-4 pt-24 pb-32 sm:gap-14 sm:px-5 sm:pt-28 lg:px-8 lg:pb-20 lg:pt-36">
       <div className="mx-auto w-full max-w-6xl">
         <SectionHeader eyebrow={t.nav.mint} title={t.mint.title} subtitle={t.mint.subtitle} />
       </div>
 
-      <ol className="mx-auto grid w-full max-w-6xl gap-4 md:grid-cols-3">
+      <ol className="mx-auto flex w-full max-w-6xl snap-x snap-mandatory gap-3 overflow-x-auto pb-1 sm:gap-4 md:grid md:snap-none md:grid-cols-3 md:overflow-visible md:pb-0">
         {t.mint.steps.map((step, i) => (
-          <li key={step.title} className="flex gap-4 rounded-2xl border border-white/10 bg-slate-900/60 p-5">
+          <li key={step.title} className="flex min-w-[82%] snap-start gap-4 rounded-2xl border border-white/10 bg-slate-900/60 p-4 sm:min-w-[60%] sm:p-5 md:min-w-0">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white">
               {i + 1}
             </span>
@@ -125,7 +125,7 @@ export function MintPage() {
       </ol>
 
       <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-5">
-        <section className="flex flex-col gap-6 rounded-3xl border border-white/10 bg-slate-900/60 p-6 sm:p-8 lg:col-span-3">
+        <section className="flex flex-col gap-5 rounded-3xl border border-white/10 bg-slate-900/60 p-5 sm:gap-6 sm:p-8 lg:col-span-3">
           <div className="flex items-center gap-2">
             <span
               className={`h-3 w-3 rounded-full ${open ? 'bg-emerald-400' : 'bg-amber-300'}`}
@@ -138,7 +138,7 @@ export function MintPage() {
 
           <div>
             <p className="text-xs uppercase tracking-widest text-slate-400">{t.mint.progress}</p>
-            <p className="mt-2 font-display text-3xl font-semibold text-white">
+            <p className="mt-2 font-display text-[26px] font-semibold text-white sm:text-3xl">
               {minted === null ? '—' : minted.toLocaleString('en-US')}
               <span className="text-lg text-slate-400">
                 {' '}
@@ -167,7 +167,7 @@ export function MintPage() {
               <h3 className="font-semibold text-white">{t.mint.agentTitle}</h3>
             </div>
             <p className="text-sm leading-relaxed text-slate-300">{t.mint.agentBody}</p>
-            <pre className="overflow-x-auto rounded-xl bg-black/40 px-4 py-3 font-mono text-sm text-amber-200">
+            <pre className="whitespace-pre-wrap break-all rounded-xl bg-black/40 px-4 py-3 font-mono text-[13px] text-amber-200 sm:text-sm">
               {SKILL_URL}
             </pre>
           </div>
@@ -176,9 +176,9 @@ export function MintPage() {
           <p className="text-sm leading-relaxed text-slate-400">{t.mint.freeNote}</p>
         </section>
 
-        <aside className="flex flex-col gap-5 rounded-3xl border border-white/10 bg-slate-900/60 p-6 sm:p-8 lg:col-span-2">
+        <aside className="flex flex-col gap-5 rounded-3xl border border-white/10 bg-slate-900/60 p-5 sm:p-8 lg:col-span-2">
           <h3 className="font-semibold text-white">{t.mint.checkTitle}</h3>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <input
               value={address}
               onChange={(e) => setAddress(e.target.value)}
@@ -190,7 +190,7 @@ export function MintPage() {
               type="button"
               onClick={checkWallet}
               disabled={checking}
-              className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-amber-400 px-4 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-amber-400 px-4 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Search className="h-4 w-4" />
               {checking ? t.mint.checking : t.mint.checkButton}
@@ -220,6 +220,30 @@ export function MintPage() {
             </div>
           )}
         </aside>
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-slate-950/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden">
+        <div className="mx-auto flex w-full max-w-6xl items-center gap-2.5 px-4 pt-3 sm:px-5">
+          <span
+            className={`h-2.5 w-2.5 shrink-0 rounded-full ${open ? 'bg-emerald-400' : 'bg-amber-300'}`}
+            aria-hidden="true"
+          />
+          <p className="truncate text-sm font-medium text-slate-100">
+            {open === null ? t.mint.syncing : open ? t.mint.statusLive : t.mint.statusClosed}
+          </p>
+          <p className="ml-auto shrink-0 font-mono text-sm text-slate-300">
+            {minted === null ? '—' : minted.toLocaleString('en-US')}
+            <span className="text-slate-500"> / {CONTRACT.totalSupply.toLocaleString('en-US')}</span>
+          </p>
+        </div>
+        <div className="mx-auto mt-2.5 w-full max-w-6xl px-4 pb-3 sm:px-5">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-white/10">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-amber-300 to-amber-500 transition-all duration-700"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
