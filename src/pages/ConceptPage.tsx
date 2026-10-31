@@ -1,8 +1,17 @@
+import type { Archetype } from '@/components/cityArtScene';
 import { CityArt } from '@/components/CityArt';
+import { CityPhoto } from '@/components/CityPhoto';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useLanguage } from '@/i18n/useLanguage';
 
-const TRAIT_SEEDS = [11, 12, 13, 14, 15, 16];
+const TRAIT_ART: { seed: number; archetype: Archetype; paletteIndex: number }[] = [
+  { seed: 11, archetype: 'skyline', paletteIndex: 0 },
+  { seed: 12, archetype: 'terraces', paletteIndex: 1 },
+  { seed: 13, archetype: 'spires', paletteIndex: 2 },
+  { seed: 14, archetype: 'domes', paletteIndex: 3 },
+  { seed: 15, archetype: 'harbor', paletteIndex: 4 },
+  { seed: 16, archetype: 'spires', paletteIndex: 5 },
+];
 
 export function ConceptPage() {
   const { t } = useLanguage();
@@ -15,7 +24,11 @@ export function ConceptPage() {
       </div>
 
       <div className="mx-auto w-full max-w-6xl">
-        <CityArt seed={2} className="aspect-[16/9] w-full shadow-2xl shadow-black/50" label={t.concept.artCaption} />
+        <CityPhoto
+          src="https://images.pexels.com/photos/3337211/pexels-photo-3337211.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+          alt={t.concept.bannerAlt}
+          className="aspect-[16/9] w-full shadow-2xl shadow-black/50"
+        />
         <p className="mt-3 text-sm text-slate-400">{t.concept.artCaption}</p>
       </div>
 
@@ -34,7 +47,14 @@ export function ConceptPage() {
         <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {t.concept.traits.map((trait, i) => (
             <div key={trait} className="group overflow-hidden rounded-2xl border border-white/10 bg-slate-900/60">
-              <CityArt seed={TRAIT_SEEDS[i]} className="aspect-square w-full rounded-none ring-0 transition-transform duration-500 group-hover:scale-105" label={trait} />
+              <CityArt
+                seed={TRAIT_ART[i].seed}
+                archetype={TRAIT_ART[i].archetype}
+                paletteIndex={TRAIT_ART[i].paletteIndex}
+                className="aspect-square w-full rounded-none ring-0 transition-transform duration-500 group-hover:scale-105"
+                label={trait}
+              />
+
               <p className="px-3 py-2.5 text-sm font-medium text-slate-200">{trait}</p>
             </div>
           ))}

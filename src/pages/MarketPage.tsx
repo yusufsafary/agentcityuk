@@ -1,5 +1,5 @@
 import { ArrowLeft, Store } from 'lucide-react';
-import { CityArt } from '@/components/CityArt';
+import { CityPhoto } from '@/components/CityPhoto';
 import type { Route } from '@/hooks/useHashRoute';
 import { useLanguage } from '@/i18n/useLanguage';
 
@@ -40,14 +40,17 @@ export function MarketPage({ navigate }: MarketPageProps) {
           {t.market.back}
         </button>
       </div>
-      <div className="relative">
-        <CityArt seed={4} className="aspect-[4/3] w-full opacity-70 grayscale-[30%]" label={t.market.title} />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="rounded-full bg-slate-950/80 px-6 py-3 font-display text-lg font-semibold text-white backdrop-blur">
+      <CityPhoto
+        src="https://images.pexels.com/photos/7511220/pexels-photo-7511220.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+        alt={t.market.title}
+        className="aspect-[4/3] w-full"
+      >
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-950/40 backdrop-blur-[2px]">
+          <span className="rounded-full bg-slate-950/80 px-6 py-3 font-display text-lg font-semibold text-white ring-1 ring-white/10 backdrop-blur">
             {t.common.comingSoon}
           </span>
         </div>
-      </div>
+      </CityPhoto>
     </div>
   );
 }

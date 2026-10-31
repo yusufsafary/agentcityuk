@@ -1,5 +1,5 @@
 import { ArrowRight, Coins, Eye, Layers, Sparkles, Wallet } from 'lucide-react';
-import { CityArt } from '@/components/CityArt';
+import { CityPhoto } from '@/components/CityPhoto';
 import { SectionHeader } from '@/components/SectionHeader';
 import { CONTRACT } from '@/config/contract';
 import type { Route } from '@/hooks/useHashRoute';
@@ -50,7 +50,23 @@ export function HomePage({ navigate }: HomePageProps) {
             </div>
           </div>
           <div className="relative">
-            <CityArt seed={1} className="aspect-[4/3] w-full shadow-2xl shadow-black/50" />
+            <div aria-hidden className="absolute -inset-6 -z-10 rounded-[2rem] bg-amber-400/10 blur-3xl" />
+            <CityPhoto
+              src="https://images.pexels.com/photos/35400651/pexels-photo-35400651.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+              alt={t.home.heroImageAlt}
+              className="aspect-[4/3] w-full shadow-2xl shadow-black/60"
+            >
+              <div className="absolute inset-x-4 bottom-4 flex items-center justify-between gap-4 rounded-2xl bg-slate-950/70 p-4 ring-1 ring-white/10 backdrop-blur-md">
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-amber-300">{t.home.sampleCity}</p>
+                  <p className="mt-1 font-display text-lg font-semibold text-white">Agent City #0001</p>
+                </div>
+                <span className="flex items-center gap-2 text-xs font-medium text-emerald-300">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+                  {t.home.agentOnline}
+                </span>
+              </div>
+            </CityPhoto>
           </div>
         </div>
 
