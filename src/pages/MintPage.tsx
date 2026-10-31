@@ -3,47 +3,9 @@ import { Bot, Check, Search, X } from 'lucide-react';
 import { SectionHeader } from '@/components/SectionHeader';
 import { CONTRACT } from '@/config/contract';
 import { useLanguage } from '@/i18n/useLanguage';
-
-const RPCS = [
-  'https://bsc-dataseed-public.bnbchain.org',
-  'https://bsc-rpc.publicnode.com',
-  'https://bsc-dataseed.binance.org',
-];
-
-const SELECTORS = {
-  totalMinted: '0xa2309ff8',
-  mintOpen: '0x24bbd049',
-  holdsAgentId: '0x11213086',
-  mintedBy: '0x3cef28d2',
-};
+import { ethCall, padAddress, SELECTORS } from '@/lib/chain';
 
 const SKILL_URL = 'https://agentcity.uk/agentcity-skill.md';
-
-function padAddress(address: string) {
-  return address.toLowerCase().replace('0x', '').padStart(64, '0');
-}
-
-async function ethCall(data: string): Promise<bigint> {
-  for (const rpc of RPCS) {
-    try {
-      const resp = await fetch(rpc, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'eth_call',
-          params: [{ to: CONTRACT.address, data }, 'latest'],
-        }),
-      });
-      const json = (await resp.json()) as { result?: string };
-      if (json.result) return BigInt(json.result);
-    } catch {
-      // try the next RPC
-    }
-  }
-  throw new Error('all RPC endpoints failed');
-}
 
 type CheckResult = { holds: boolean; minted: number } | null;
 

@@ -51,6 +51,11 @@ const en = {
     ],
     ctaBandTitle: 'Your ID is ready to become a city.',
     ctaBandBody: 'Hold a Binance Agent ID and let your agent claim up to 10 cities for you.',
+    liveMint: {
+      title: 'Live mint',
+      body: 'Minting runs through Binance Agentic Wallet agents — no wallet connect. The state below is read live from the contract on BNB Chain.',
+      cta: 'Open the mint page',
+    },
   },
   concept: {
     title: 'The concept',
@@ -230,6 +235,11 @@ const zh: Messages = {
     ],
     ctaBandTitle: '你的 ID 已准备好变成一座城市。',
     ctaBandBody: '持有 Binance Agent ID，让你的智能体为你领取最多 10 座城市。',
+    liveMint: {
+      title: '实时铸造',
+      body: '铸造通过 Binance Agentic Wallet 智能体完成 — 无需连接钱包。下方状态实时读取自 BNB Chain 上的合约。',
+      cta: '打开铸造页面',
+    },
   },
   concept: {
     title: '项目概念',

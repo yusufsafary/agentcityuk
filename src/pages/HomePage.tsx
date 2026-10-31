@@ -1,5 +1,6 @@
 import { ArrowRight, Coins, Eye, Layers, Sparkles, Wallet } from 'lucide-react';
 import { CityPhoto } from '@/components/CityPhoto';
+import { LiveMintSection } from '@/components/LiveMintSection';
 import { SectionHeader } from '@/components/SectionHeader';
 import { CONTRACT } from '@/config/contract';
 import type { Route } from '@/hooks/useHashRoute';
@@ -101,6 +102,8 @@ export function HomePage({ navigate }: HomePageProps) {
           })}
         </div>
       </section>
+
+      <LiveMintSection navigate={navigate} />
 
       <section className="mx-auto w-full max-w-6xl px-5 pb-20 lg:px-8">
         <div className="flex flex-col items-start gap-6 rounded-3xl border border-amber-300/20 bg-gradient-to-br from-slate-900 to-slate-950 p-7 sm:flex-row sm:items-center sm:justify-between sm:p-10">
