@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { ArrowRight, Coins, Eye, Layers, Sparkles, Wallet } from 'lucide-react';
+import { ArrowRight, Coins, Eye, Layers, Wallet } from 'lucide-react';
 import { CityPhoto } from '@/components/CityPhoto';
 import { LiveMintSection } from '@/components/LiveMintSection';
-import { MarketTeaser } from '@/components/MarketTeaser';
+import { MarketSection } from '@/components/MarketSection';
 import { Reveal } from '@/components/Reveal';
 import { SectionHeader } from '@/components/SectionHeader';
 import { CONTRACT } from '@/config/contract';
@@ -12,8 +12,6 @@ import { useLanguage } from '@/i18n/useLanguage';
 interface HomePageProps {
   navigate: (route: Route) => void;
 }
-
-const PILLAR_ICONS = [Layers, Sparkles, Eye];
 
 export function HomePage({ navigate }: HomePageProps) {
   const { t } = useLanguage();
@@ -107,52 +105,12 @@ export function HomePage({ navigate }: HomePageProps) {
       </section>
 
       <Reveal>
-      <section className="mx-auto w-full max-w-6xl px-5 py-16 lg:px-8 lg:py-24">
-        <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">{t.home.pillarsTitle}</h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {t.home.pillars.map((pillar, i) => {
-            const Icon = PILLAR_ICONS[i];
-            return (
-              <article
-                key={pillar.title}
-                className="group rounded-2xl border border-white/10 bg-slate-900/60 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/40"
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-400/10 text-amber-300 transition-colors group-hover:bg-amber-400 group-hover:text-slate-950">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <h3 className="mt-5 text-lg font-semibold text-white">{pillar.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-300">{pillar.body}</p>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-      </Reveal>
-
-      <Reveal>
         <LiveMintSection navigate={navigate} />
       </Reveal>
 
       <Reveal>
-        <MarketTeaser navigate={navigate} />
+        <MarketSection navigate={navigate} />
       </Reveal>
-
-      <section className="mx-auto w-full max-w-6xl px-5 pb-20 lg:px-8">
-        <div className="flex flex-col items-start gap-6 rounded-3xl border border-amber-300/20 bg-gradient-to-br from-slate-900 to-slate-950 p-7 sm:flex-row sm:items-center sm:justify-between sm:p-10">
-          <div className="max-w-xl">
-            <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">{t.home.ctaBandTitle}</h2>
-            <p className="mt-2 text-sm leading-relaxed text-slate-300 sm:text-base">{t.home.ctaBandBody}</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => navigate('/mint')}
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-amber-400 px-6 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-amber-300"
-          >
-            {t.home.ctaPrimary}
-            <ArrowRight className="h-4 w-4" />
-          </button>
-        </div>
-      </section>
     </div>
   );
 }

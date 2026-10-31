@@ -15,7 +15,7 @@ function Site() {
   let page;
   switch (route) {
     case '/concept':
-      page = <ConceptPage />;
+      page = <ConceptPage navigate={navigate} />;
       break;
     case '/mint':
       page = <MintPage />;
