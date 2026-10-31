@@ -1,18 +1,41 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
-/// @title Agent City
-/// @notice Each eligible Binance Agentic Wallet ID is one city. Each city is one agent.
-/// @dev Skeleton: review, test, and audit before mainnet deployment.
+/// @title Agent City (AGCITY) - agentcity.uk
+/// @notice Setiap Binance Agentic Wallet ID yang masuk daftar eligible adalah satu kota.
+///         Konsep mengikuti web agentcity.uk persis:
+///         - Supply 11.111, maks 10 per wallet, mint(value) dengan quantity 1..10.
+///         - Mint GRATIS (harga NFT 0) + fee tetap per kota dalam BNB sebagai filter bot.
+///           Fee awal 0.0003 BNB per kota (sesuai src/config/contract.ts di repo web:
+///           feePerCityBnb = '0.0003'), bisa diatur owner lewat setMintFee().
+///         - Eligibility = gerbang Binance Agent ID (SPACE ID Agent ID NFT on-chain),
+///           SAMA seperti proyek-proyek Agentic Pass sebelumnya (NOMIO/UAP/MPAL/PUP/
+///           WEDO/ZAPLO): wallet wajib memegang Agent ID, dicek via holdsAgentId().
+///         - Anti-bot: panggilan dari kontrak ditolak (msg.sender harus tx.origin).
+///         - Reveal OTOMATIS saat sold out (totalMinted == MAX_SUPPLY): sebelum reveal
+///           semua token menunjuk satu placeholder (unrevealedURI); sesudah reveal
+///           tokenURI = baseTokenURI + id hasil shuffle offset + ".json".
+///           Owner juga bisa reveal lebih awal lewat revealManually().
+///         - withdraw() tanpa argumen ke owner (selector 0x3ccfd60b, pola operasional
+///           yang sama seperti kontrak-kontrak Agentic Pass sebelumnya).
+///         - Mint deploy TERTUTUP (mintOpen = false).
 contract AgentCity is ERC721, Ownable {
+    using Strings for uint256;
+
     uint256 public constant MAX_SUPPLY = 11_111;
     uint256 public constant MAX_PER_WALLET = 10;
 
-    uint256 public mintFee;
-    bool public mintOpen;
+    /// @notice Kontrak NFT SPACE ID Agent ID di BSC ("SPACE ID Agent ID", simbol AI).
+    IERC721 public constant AGENT_ID =
+        IERC721(0x60B9262456dE011F7d15a54CdD8c48bAaa8B022F);
+
+    uint256 public mintFee; // wei per kota
+    bool public mintOpen; // false saat deploy
     bool public revealed;
     uint256 public revealOffset;
     uint256 public totalMinted;
@@ -20,14 +43,14 @@ contract AgentCity is ERC721, Ownable {
     string public unrevealedURI;
     string public baseTokenURI;
 
-    mapping(address => bool) public eligible;
     mapping(address => uint256) public mintedBy;
 
     event MintOpenUpdated(bool open);
     event MintFeeUpdated(uint256 fee);
-    event EligibilityUpdated(address indexed wallet, bool allowed);
     event Minted(address indexed wallet, uint256 fromId, uint256 quantity);
     event Revealed(uint256 offset);
+    event BaseURIChanged(string baseURI);
+    event UnrevealedURIChanged(string uri);
     event Withdrawn(address indexed to, uint256 amount);
 
     error MintClosed();
@@ -42,19 +65,35 @@ contract AgentCity is ERC721, Ownable {
     error TransferFailed();
 
     constructor(
+        address initialOwner,
         uint256 initialFee,
-        string memory initialUnrevealedURI
-    ) ERC721("Agent City", "AGCITY") Ownable(msg.sender) {
+        string memory initialUnrevealedURI,
+        string memory initialBaseURI
+    ) ERC721("Agent City", "AGCITY") Ownable(initialOwner) {
         mintFee = initialFee;
         unrevealedURI = initialUnrevealedURI;
+        baseTokenURI = initialBaseURI;
+        mintOpen = false;
     }
 
-    /// @notice Eligible wallets mint up to 10 cities each, paying the fixed BNB fee per city.
-    /// @dev Only direct wallet transactions are accepted, so contract-based bots cannot mint.
+    /// @notice Harga yang harus dikirim per kota saat ini (= mintFee; harga NFT-nya 0).
+    function currentPrice() external view returns (uint256) {
+        return mintFee;
+    }
+
+    /// @notice True bila wallet memegang Binance Agent ID (gerbang eligibility).
+    function holdsAgentId(address account) public view returns (bool) {
+        return AGENT_ID.balanceOf(account) > 0;
+    }
+
+    /// @notice Wallet pemegang Agent ID mint 1..10 kota per panggilan, membayar fee tetap per kota.
+    /// @dev Hanya transaksi langsung dari wallet; kontrak lain ditolak sebagai filter bot.
     function mint(uint256 quantity) external payable {
-        if (!mintOpen) revert MintClosed();
+        // 1) Gerbang Agent ID — diperiksa sebelum apa pun (pola proyek sebelumnya).
+        if (!holdsAgentId(msg.sender)) revert NotEligible();
+        // 2) Hanya wallet langsung, panggilan dari kontrak lain ditolak.
         if (msg.sender != tx.origin) revert ContractCallsNotAllowed();
-        if (!eligible[msg.sender]) revert NotEligible();
+        if (!mintOpen) revert MintClosed();
         if (quantity == 0) revert ZeroQuantity();
         if (mintedBy[msg.sender] + quantity > MAX_PER_WALLET) revert ExceedsWalletLimit();
         if (totalMinted + quantity > MAX_SUPPLY) revert ExceedsMaxSupply();
@@ -74,13 +113,6 @@ contract AgentCity is ERC721, Ownable {
         }
     }
 
-    function setEligible(address[] calldata wallets, bool allowed) external onlyOwner {
-        for (uint256 i = 0; i < wallets.length; i++) {
-            eligible[wallets[i]] = allowed;
-            emit EligibilityUpdated(wallets[i], allowed);
-        }
-    }
-
     function setMintOpen(bool open) external onlyOwner {
         mintOpen = open;
         emit MintOpenUpdated(open);
@@ -91,11 +123,17 @@ contract AgentCity is ERC721, Ownable {
         emit MintFeeUpdated(fee);
     }
 
-    function setBaseTokenURI(string calldata uri) external onlyOwner {
+    function setBaseURI(string calldata uri) external onlyOwner {
         baseTokenURI = uri;
+        emit BaseURIChanged(uri);
     }
 
-    /// @notice Owner can reveal early; otherwise reveal happens automatically at sellout.
+    function setUnrevealedURI(string calldata uri) external onlyOwner {
+        unrevealedURI = uri;
+        emit UnrevealedURIChanged(uri);
+    }
+
+    /// @notice Owner bisa reveal lebih awal; tanpa ini reveal terjadi otomatis saat sold out.
     function revealManually() external onlyOwner {
         _reveal();
     }
@@ -103,8 +141,18 @@ contract AgentCity is ERC721, Ownable {
     function _reveal() internal {
         if (revealed) revert AlreadyRevealed();
         revealed = true;
-        // Pseudo-random offset. Fine for a collection reveal, not for high-value randomness.
-        revealOffset = uint256(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, totalMinted))) % MAX_SUPPLY;
+        // Offset pseudo-random untuk shuffle peta. Cukup untuk reveal koleksi,
+        // bukan untuk randomness bernilai tinggi.
+        revealOffset = uint256(
+            keccak256(
+                abi.encodePacked(
+                    block.prevrandao,
+                    block.timestamp,
+                    blockhash(block.number - 1),
+                    totalMinted
+                )
+            )
+        ) % MAX_SUPPLY;
         emit Revealed(revealOffset);
     }
 
@@ -112,31 +160,15 @@ contract AgentCity is ERC721, Ownable {
         _requireOwned(tokenId);
         if (!revealed) return unrevealedURI;
         uint256 shuffled = ((tokenId - 1) + revealOffset) % MAX_SUPPLY + 1;
-        return string.concat(baseTokenURI, _toString(shuffled), ".json");
+        return string.concat(baseTokenURI, shuffled.toString(), ".json");
     }
 
-    function withdraw(address payable to) external onlyOwner {
+    /// @notice Tarik seluruh saldo BNB kontrak ke owner.
+    function withdraw() external onlyOwner {
         uint256 balance = address(this).balance;
         if (balance == 0) revert NothingToWithdraw();
-        (bool ok, ) = to.call{value: balance}("");
+        (bool ok, ) = payable(owner()).call{value: balance}("");
         if (!ok) revert TransferFailed();
-        emit Withdrawn(to, balance);
-    }
-
-    function _toString(uint256 value) private pure returns (string memory) {
-        if (value == 0) return "0";
-        uint256 temp = value;
-        uint256 digits;
-        while (temp != 0) {
-            digits++;
-            temp /= 10;
-        }
-        bytes memory buffer = new bytes(digits);
-        while (value != 0) {
-            digits -= 1;
-            buffer[digits] = bytes1(uint8(48 + (value % 10)));
-            value /= 10;
-        }
-        return string(buffer);
+        emit Withdrawn(owner(), balance);
     }
 }

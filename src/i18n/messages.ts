@@ -78,10 +78,10 @@ const en = {
   },
   mint: {
     title: 'Mint your city',
-    subtitle: 'Eligibility is checked on-chain. Mint up to 10 cities per eligible wallet.',
+    subtitle: 'Eligibility is checked on-chain: your wallet must hold a Binance Agent ID. Mint up to 10 cities per wallet.',
     steps: [
       { title: 'Connect wallet', body: 'Use the wallet linked to your Binance Agentic Wallet ID.' },
-      { title: 'Check eligibility', body: 'The contract confirms your wallet is on the eligible list.' },
+      { title: 'Check eligibility', body: 'The contract checks that your wallet holds a Binance Agent ID.' },
       { title: 'Mint your cities', body: 'Pick a quantity from 1 to 10 and confirm the transaction.' },
     ],
     connect: 'Connect wallet',
@@ -90,7 +90,7 @@ const en = {
     connectError: 'Connection was cancelled. Please try again.',
     addressLabel: 'Connected wallet',
     eligibleYes: 'Eligible',
-    eligibleNo: 'Not on the eligible list',
+    eligibleNo: 'No Binance Agent ID',
     eligibleUnknown: 'Checked when minting opens',
     quantity: 'Quantity',
     perCity: 'Fee per city',
@@ -116,7 +116,7 @@ const en = {
         name: 'Phase 2',
         title: 'Mint and reveal',
         status: 'Next',
-        items: ['Eligibility list published', 'Mint on BNB Chain', 'Automatic reveal at sellout'],
+        items: ['Smart contract deployed', 'Mint on BNB Chain', 'Automatic reveal at sellout'],
       },
       {
         name: 'Phase 3',
@@ -142,7 +142,7 @@ const en = {
       },
       {
         q: 'Who can mint?',
-        a: 'Wallets on the eligible list can mint. Each eligible wallet can mint up to 10 cities.',
+        a: 'Any wallet holding a Binance Agent ID can mint. Each wallet can mint up to 10 cities.',
       },
       {
         q: 'Is minting free?',
@@ -259,7 +259,7 @@ const zh: Messages = {
     subtitle: '资格通过链上验证。每个符合条件的钱包最多可铸造 10 座城市。',
     steps: [
       { title: '连接钱包', body: '使用与你的 Binance Agentic Wallet ID 绑定的钱包。' },
-      { title: '检查资格', body: '合约会确认你的钱包在合格名单中。' },
+      { title: '检查资格', body: '合约会检查你的钱包是否持有 Binance Agent ID。' },
       { title: '铸造城市', body: '选择 1 到 10 座城市的数量，并确认交易。' },
     ],
     connect: '连接钱包',
@@ -268,7 +268,7 @@ const zh: Messages = {
     connectError: '连接已取消，请重试。',
     addressLabel: '已连接钱包',
     eligibleYes: '符合资格',
-    eligibleNo: '不在合格名单中',
+    eligibleNo: '未持有 Binance Agent ID',
     eligibleUnknown: '铸造开放时检查',
     quantity: '数量',
     perCity: '每座城市费用',
@@ -294,7 +294,7 @@ const zh: Messages = {
         name: '第二阶段',
         title: '铸造与揭示',
         status: '下一步',
-        items: ['发布合格名单', '在 BNB Chain 上铸造', '售罄后自动揭示'],
+        items: ['智能合约已部署', '在 BNB Chain 上铸造', '售罄后自动揭示'],
       },
       {
         name: '第三阶段',
@@ -320,7 +320,7 @@ const zh: Messages = {
       },
       {
         q: '谁可以铸造？',
-        a: '在合格名单中的钱包可以铸造。每个合格钱包最多可铸造 10 座城市。',
+        a: '持有 Binance Agent ID 的钱包可以铸造。每个钱包最多可铸造 10 座城市。',
       },
       {
         q: '铸造是免费的吗？',
